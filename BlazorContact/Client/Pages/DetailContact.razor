@@ -1,0 +1,38 @@
+﻿@page "/DetailContact/{ContactId:int}"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager;
+
+<h3>Detail Contact</h3>
+<dl>
+    <dt>Full Name : </dt>
+    <dd>@Contact.FullName</dd>
+    <dt>Email : </dt>
+    <dd>@Contact.Email</dd>
+    <dt> Mobile : </dt>
+    <dd>@Contact.Mobile</dd>
+    <dt>Address : </dt>
+    <dd>@Contact.Address</dd>
+    <dt></dt>
+    <dd>
+        <a class="btn btn-danger" onclick="@Delete">Delete</a>
+    </dd>
+</dl>
+
+@code {
+    [Parameter]
+    public int ContactId { get; set; }
+
+    public Contact Contact = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+            Contact = await HttpClient.GetFromJsonAsync<Contact>($"/api/Contacts/{ContactId}");
+    }
+
+    protected async Task Delete()
+    {
+        await HttpClient.DeleteAsync($"/api/Contacts/{ContactId}");
+        NavigationManager.NavigateTo("/ContactList");
+    }
+
+}

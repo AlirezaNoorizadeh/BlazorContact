@@ -1,0 +1,85 @@
+﻿@page "/AddContact"
+@page "/EditContac/{ContactId:int}"
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager;
+
+<PageTitle>@title</PageTitle>
+
+<h3>@title</h3>
+
+<EditForm Model="@Contact" OnValidSubmit="Save">
+    <DataAnnotationsValidator/>
+    <div class="mb-3">
+        <label>Full Name</label>
+        <div class="col-md-4">
+            <InputText @bind-Value="Contact.FullName" class="form-control"/>
+            <ValidationMessage For="() => Contact.FullName"/>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Email</label>
+        <div class="col-md-4">
+            <InputText @bind-Value="Contact.Email" class="form-control"/>
+            <ValidationMessage For="() => Contact.Email"/>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Mobile</label>
+        <div class="col-md-4">
+            <InputText @bind-Value="Contact.Mobile" class="form-control"/>
+            <ValidationMessage For="() => Contact.Mobile"/>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label>Address</label>
+        <div class="col-md-4">
+            <InputTextArea @bind-Value="Contact.Address" class="form-control"/>
+            <ValidationMessage For="() => Contact.Address"/>
+        </div>
+    </div>
+    <div class="mb-3">
+        <label></label>
+        <div class="col-md-4">
+            <input type="submit" value="@title" class="btn btn-@btnColor" />
+        </div>
+    </div>
+</EditForm>
+
+@code {
+    private string title = "Add Contact";
+    private string btnColor = "success";
+
+    [Parameter]
+    public int ContactId { get; set; }
+
+    public Contact Contact = new();
+
+}
+
+@functions
+{
+    protected override async Task OnInitializedAsync()
+    {
+        if (ContactId != 0)
+        {
+            title = "Edit Contact";
+            btnColor = "warning";
+            Contact = await HttpClient.GetFromJsonAsync<Contact>($"/api/Contacts/{ContactId}");
+        }
+    }
+
+    protected async Task Save()
+    {
+        if (ContactId == 0)
+        {
+            await HttpClient.PostAsJsonAsync("/api/Contacts", Contact);
+        }
+        else
+        {
+            Contact.ContactId = ContactId;
+            await HttpClient.PutAsJsonAsync($"/api/Contacts/{ContactId}", Contact);
+        }
+
+        NavigationManager.NavigateTo("/ContactList");
+    }
+}

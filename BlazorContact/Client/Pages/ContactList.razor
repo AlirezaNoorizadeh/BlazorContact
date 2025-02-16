@@ -1,0 +1,49 @@
+﻿@page "/ContactList"
+@inject HttpClient HttpClient
+<PageTitle>Contact List</PageTitle>
+
+<h3>Contact List</h3>
+<p><a class="btn btn-outline-success" href="/AddContact">Create New</a></p>
+@if (contacts != null)
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Mobile</th>
+                <th>Commands</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in contacts)
+            {
+                <tr>
+                    <td>@item.FullName</td>
+                    <td>@item.Email</td>
+                    <td>@item.Mobile</td>
+                    <td>
+                        <a class="btn btn-outline-warning" href="/EditContac/@item.ContactId">Edit</a>
+                        <a class="btn btn-outline-primary" href="/DetailContact/@item.ContactId">Detail</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">
+        No Data
+    </div>
+}
+
+@code {
+    private Contact[] contacts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        contacts = await HttpClient.GetFromJsonAsync<Contact[]>("api/Contacts");
+    }
+}
+
