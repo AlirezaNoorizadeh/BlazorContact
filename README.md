@@ -26,12 +26,22 @@ Server=your_server_name;Database=your_database_name;Trusted_Connection=True;
 ```
 
 ### 3. Run Database Migrations
-- Open the **Package Manager Console** in Visual Studio by navigating to `Tools > NuGet Package Manager > Package Manager Console`.
-- Run the following commands to create and update the database schema:
+#### Option 1: Using Package Manager Console
+- Open **Tools > NuGet Package Manager > Package Manager Console** in Visual Studio.
+- Run the following commands:
   ```bash
   Add-Migration YourMigrationName
   Update-Database
   ```
+This method uses the Microsoft.EntityFrameworkCore.Tools NuGet package.
+#### Option 2: Using .NET CLI
+- Open a terminal.
+- Run the following commands:
+  ```bash
+  dotnet ef migrations add Initial
+  dotnet ef database update
+  ```
+This method uses the Microsoft.EntityFrameworkCore.Design NuGet package.
 
 ### 4. Build and Run the Project
 - Build the project in Visual Studio.
